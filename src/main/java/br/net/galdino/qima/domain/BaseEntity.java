@@ -13,6 +13,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @MappedSuperclass
@@ -24,10 +25,12 @@ public abstract class BaseEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 	
+	@NotNull(message = "Name is mandatory")
 	@NotBlank(message = "Name is mandatory")
 	@Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
 	private String name;
 	
+	@NotNull(message = "Description is mandatory")
 	@NotBlank(message = "Description is mandatory")
 	@Size(min = 2, max = 110, message = "Description must be between 2 and 110 characters")
 	private String description;

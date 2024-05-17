@@ -23,7 +23,7 @@ public class Category extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "Category [products=" + products + "]" + super.toString();
+		return super.toString() + " - Category [products=" + products + "]";
 	}
 	
 }

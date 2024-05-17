@@ -47,7 +47,7 @@ public class Product extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "Product [category=" + category + ", price=" + price + ", available=" + available + "]" + super.toString();
+		return super.toString() + " - Product [category=" + category + ", price=" + price + ", available=" + available + "]";
 	}
 	
 }
