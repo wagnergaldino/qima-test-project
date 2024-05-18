@@ -19,7 +19,7 @@
   <div th:replace="fragments/header :: header"></div>
 
   <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
-    <h2 class="text-center">products</h2>
+    <h2 class="text-center">Products</h2>
 
     <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message"
       role="alert">
@@ -154,9 +154,9 @@
         e.preventDefault();
         link = $(this);
 
-        productTitle = link.attr("productTitle");
+        productName = link.attr("productName");
         $("#yesBtn").attr("href", link.attr("href"));
-        $("#confirmText").html("Do you want to delete the product \<strong\>" + productTitle + "\<\/strong\>?");
+        $("#confirmText").html("Do you want to delete the product \<strong\>" + productName + "\<\/strong\>?");
         $("#confirmModal").modal();
       });
 
