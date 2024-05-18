@@ -48,8 +48,6 @@ public class BootstrapData implements CommandLineRunner {
 		categoryRepository.save(category5);
 		
 		Person person = new Person();
-		person.setName("WaGal");
-		person.setDescription("Wagner Galindo");
 		person.setEmail("wagner@galdino.net.br");
 		person.setPwd("1234567");
 		personRepository.save(person);
