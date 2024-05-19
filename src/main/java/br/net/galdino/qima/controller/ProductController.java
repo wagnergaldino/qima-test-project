@@ -1,9 +1,7 @@
 package br.net.galdino.qima.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,36 +9,37 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import br.net.galdino.qima.domain.Category;
 import br.net.galdino.qima.domain.Product;
+import br.net.galdino.qima.repository.CategoryRepository;
 import br.net.galdino.qima.repository.ProductRepository;
+import jakarta.validation.Valid;
 
 
 @Controller
 public class ProductController {
 	
 	private ProductRepository productRepository;
+	private CategoryRepository categoryRepository;
 	
-	public ProductController(ProductRepository productRepository) {
+	public ProductController(ProductRepository productRepository, CategoryRepository categoryRepository) {
+		this.categoryRepository = categoryRepository;
 		this.productRepository = productRepository;
 	}
 	
 	@GetMapping("/products")
 	public String getAll(Model model, @RequestParam(required = false) String keyword,
 									  @RequestParam(defaultValue = "1") int page,
-									  @RequestParam(defaultValue = "6") int size,
+									  @RequestParam(defaultValue = "3") int size,
 									  @RequestParam(defaultValue = "id,asc") String[] sort) {
 	    try {
 		    List<Product> products = new ArrayList<Product>();
@@ -82,21 +81,52 @@ public class ProductController {
 	@GetMapping("/products/new")
 	public String addProduct(Model model) {
 		Product product = new Product();
+		Category category = new Category();
+		category.setId(0L);
+		product.setCategory(category);
 		product.setAvailable(true);
+		
+		List<Category> categories = categoryRepository.findAll();
+		model.addAttribute("categories", categories);
+		model.addAttribute("product", product);
+		model.addAttribute("pageTitle", "Create new Product");
+		
+		return "new_product_form";
 
-	    model.addAttribute("product", product);
-	    model.addAttribute("pageTitle", "Create new Product");
-
-	    return "product_form";
 	}
 
 	@PostMapping("/products/save")
-	public String saveProduct(Product product, RedirectAttributes redirectAttributes) {
+	public String saveProduct(@Valid Product product, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 	    try {
+	    	
+	    	if(product.getName() == null || product.getName().isEmpty()
+	    			|| product.getDescription() == null || product.getDescription().isEmpty()
+	    			|| product.getCategory() == null || product.getPrice() == null
+	    			|| product.getAvailable() == null) {
+	    		if(product.getId() != null && product.getId() > 0) {
+			        return "edit_product_form";
+		        } else {
+			        return "new_product_form";
+		        }
+	    	}
+	    	
+	    	if(bindingResult.hasErrors()) {
+	    		if(product.getId() != null && product.getId() > 0) {
+			        return "edit_product_form";
+		        } else {
+			        return "new_product_form";
+		        }
+	    	}
+	    	
 	    	productRepository.save(product);
 	        redirectAttributes.addFlashAttribute("message", "The Product has been saved successfully!");
 	    } catch (Exception e) {
 	        redirectAttributes.addAttribute("message", e.getMessage());
+	        if(product.getId() != null && product.getId() > 0) {
+		        return "edit_product_form";
+	        } else {
+		        return "new_product_form";
+	        }
 	    }
 	    return "redirect:/products";
 	}
@@ -104,16 +134,18 @@ public class ProductController {
 	@GetMapping("/products/{id}")
 	public String editProduct(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
 	    try {
-	    	Product product = productRepository.findById(id).get();
+	    	Product product = productRepository.findById(id).get();	    	
 
+	    	List<Category> categories = categoryRepository.findAll();
+			model.addAttribute("categories", categories);
 	        model.addAttribute("product", product);
+	        model.addAttribute("selectedCategory", product.getCategory().getId());
 	        model.addAttribute("pageTitle", "Edit Product (ID: " + id + ")");
-
-	        return "product_form";
 	    } catch (Exception e) {
 	    	redirectAttributes.addFlashAttribute("message", e.getMessage());
-	    }	    
-	    return "redirect:/products";	    
+	    }	
+	    return "edit_product_form";
+	    //return "redirect:/products";	    
 	}
 
 	@GetMapping("/products/delete/{id}")
@@ -126,17 +158,5 @@ public class ProductController {
 	    }
 	    return "redirect:/products";
 	}
-	
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
 
 }

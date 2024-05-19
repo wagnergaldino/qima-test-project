@@ -48,6 +48,7 @@ public class PersonController {
 			
 		} catch (Exception e) {
 			model.addAttribute("loginError", true);
+			return "login_form";
 		}
 
 		return "redirect:/products";

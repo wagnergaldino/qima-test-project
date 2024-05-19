@@ -64,7 +64,8 @@
             <th th:replace="fragments/sorting :: sorting('name','Name')"></th>
             <th th:replace="fragments/sorting :: sorting('description','Description')"></th>
             <th th:replace="fragments/sorting :: sorting('price','Price')"></th>
-            <th>Available</th>
+            <th>Category Path</th>
+			<th>Available</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -74,11 +75,10 @@
             <td>[[${product.name}]]</td>
             <td>[[${product.description}]]</td>
             <td>[[${product.price}]]</td>
+			<td>/category/[[${product.category.id}]]</td>
             <td>
-              <a th:if="${product.available == true}" class="fa-regular fa-square-check"
-                th:href="@{'/products/' + ${product.id} + '/available/false'}" title="Disable this product"></a>
-              <a th:if="${product.available == false}" class="fa-regular fa-square icon-dark"
-                th:href="@{'/products/' + ${product.id} + '/available/true'}" title="Enable this product"></a>
+              <a th:if="${product.available == true}" class="fa-regular fa-square-check"></a>
+              <a th:if="${product.available == false}" class="fa-regular fa-square icon-dark"></a>
             </td>
             <td>
               <a th:href="@{'/products/' + ${product.id}}" title="Edit this product"
