@@ -4,19 +4,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import br.net.galdino.qima.domain.Category;
-import br.net.galdino.qima.domain.Person;
 import br.net.galdino.qima.repository.CategoryRepository;
-import br.net.galdino.qima.repository.PersonRepository;
 
 @Component
 public class BootstrapData implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
-    private final PersonRepository personRepository;
     
-	public BootstrapData(CategoryRepository categoryRepository, PersonRepository personRepository) {
+	public BootstrapData(CategoryRepository categoryRepository) {
 		this.categoryRepository = categoryRepository;
-		this.personRepository = personRepository;
 	}
 
 	@Override
@@ -46,11 +42,6 @@ public class BootstrapData implements CommandLineRunner {
 		category5.setName("Category 5");
 		category5.setDescription("Description Category 5");
 		categoryRepository.save(category5);
-		
-		Person person = new Person();
-		person.setEmail("wagner@galdino.net.br");
-		person.setPwd("1234567");
-		personRepository.save(person);
 		
 	}
 

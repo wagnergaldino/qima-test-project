@@ -80,6 +80,7 @@ public class ProductController {
 	
 	@GetMapping("/products/new")
 	public String addProduct(Model model) {
+		
 		Product product = new Product();
 		Category category = new Category();
 		category.setId(0L);
@@ -133,6 +134,7 @@ public class ProductController {
 
 	@GetMapping("/products/{id}")
 	public String editProduct(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+		
 	    try {
 	    	Product product = productRepository.findById(id).get();	    	
 
@@ -144,19 +146,23 @@ public class ProductController {
 	    } catch (Exception e) {
 	    	redirectAttributes.addFlashAttribute("message", e.getMessage());
 	    }	
-	    return "edit_product_form";
-	    //return "redirect:/products";	    
+	    
+	    return "edit_product_form";   
+	    
 	}
 
 	@GetMapping("/products/delete/{id}")
 	public String deleteProduct(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+		
 	    try {
 	        productRepository.deleteById(id);
 	        redirectAttributes.addFlashAttribute("message", "The Product with id=" + id + " has been deleted successfully!");
 	    } catch (Exception e) {
 	        redirectAttributes.addFlashAttribute("message", e.getMessage());
 	    }
+	    
 	    return "redirect:/products";
+	    
 	}
 
 }
