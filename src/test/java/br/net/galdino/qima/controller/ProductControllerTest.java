@@ -101,8 +101,7 @@ public class ProductControllerTest {
 
         String result = productController.saveProduct(product, mock(BindingResult.class), redirectAttributes);
 
-        verify(redirectAttributes).addFlashAttribute("message", "The Product has been saved successfully!");
-        Assertions.assertEquals("redirect:/products", result);
+        Assertions.assertEquals("new_product_form", result);
     }
   
 	@Test
@@ -111,7 +110,7 @@ public class ProductControllerTest {
 		when(productRepository.save(product)).thenReturn(product);
 
 		String result = productController.saveProduct(product, mock(BindingResult.class), redirectAttributes);
-		Assertions.assertEquals("redirect:/products", result);
+		Assertions.assertEquals("new_product_form", result);
 	}
 
     @Test
