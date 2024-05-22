@@ -1,4 +1,4 @@
-# qima-test-project
+# Qima Test Project
 
 Notes:
 
